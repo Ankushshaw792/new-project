@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
-import { Avatar } from "../ui/avatar";
+import { Input } from "../ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import SearchOverlay from "../search/SearchOverlay";
-import { Globe, Menu, User, LogOut } from "lucide-react";
+import { MapPin, Search, User, LogOut } from "lucide-react";
 import { AuthModal } from "../auth/AuthModal";
 import { useAuth } from "@/lib/auth";
 
@@ -36,82 +35,75 @@ const TopNav = ({
     <nav className="flex items-center justify-between px-6 py-4 bg-white border-b">
       {/* Logo */}
       <div className="flex-shrink-0" onClick={onLogoClick}>
-        <svg
-          className="h-8 w-auto text-[#FF385C] cursor-pointer"
-          fill="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
-        </svg>
+        <h1 className="text-2xl font-bold text-black cursor-pointer">NYLOUR</h1>
       </div>
 
-      {/* Search Bar */}
-      <div className="flex-1 max-w-2xl mx-auto px-4">
-        <SearchOverlay />
-      </div>
-
-      {/* Right Navigation */}
-      <div className="flex items-center gap-4">
+      {/* Center Section with Location, Search, and Actions */}
+      <div className="flex items-center gap-4 flex-1 max-w-4xl mx-8">
+        {/* Set Location Button */}
         <Button
-          variant="ghost"
-          className="text-sm font-medium"
+          variant="outline"
+          className="flex items-center gap-2 px-4 py-2 border-gray-300 text-gray-700 hover:bg-gray-50"
+        >
+          <MapPin className="h-4 w-4" />
+          Set Location
+        </Button>
+
+        {/* Search Bar */}
+        <div className="relative flex-1 max-w-lg">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <Input
+            placeholder="Search for Salon or Styles"
+            className="pl-10 pr-4 py-3 w-full border-gray-300 rounded-full bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500"
+          />
+        </div>
+
+        {/* Register your Salon Button */}
+        <Button
+          className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full font-medium"
           onClick={onHostClick}
         >
-          Airbnb your home
+          Register your Salon
         </Button>
+      </div>
 
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-full"
-          onClick={() => onLanguageChange("en")}
-        >
-          <Globe className="h-5 w-5" />
-        </Button>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              className="rounded-full p-3 flex items-center gap-3 border-gray-300"
-            >
-              <Menu className="h-4 w-4" />
-              <Avatar className="h-8 w-8 border">
+      {/* Login/Profile Section */}
+      <div className="flex items-center gap-4">
+        {user ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="flex items-center gap-2 text-gray-700 hover:bg-gray-50"
+              >
                 <User className="h-5 w-5" />
-              </Avatar>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            {user ? (
-              <>
-                <DropdownMenuItem onClick={onHomeClick}>Homes</DropdownMenuItem>
-                <DropdownMenuItem onClick={onExperiencesClick}>
-                  Experiences
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={onProfileClick}>
-                  Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={signOut} className="text-red-500">
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Sign out
-                </DropdownMenuItem>
-              </>
-            ) : (
-              <>
-                <DropdownMenuItem onClick={() => setIsAuthModalOpen(true)}>
-                  Sign in
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setIsAuthModalOpen(true)}>
-                  Sign up
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={onHomeClick}>Homes</DropdownMenuItem>
-                <DropdownMenuItem onClick={onExperiencesClick}>
-                  Experiences
-                </DropdownMenuItem>
-              </>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+                Profile
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={onHomeClick}>Homes</DropdownMenuItem>
+              <DropdownMenuItem onClick={onExperiencesClick}>
+                Experiences
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={onProfileClick}>
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={signOut} className="text-red-500">
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Button
+            variant="ghost"
+            className="flex items-center gap-2 text-gray-700 hover:bg-gray-50"
+            onClick={() => setIsAuthModalOpen(true)}
+          >
+            <User className="h-5 w-5" />
+            Login
+          </Button>
+        )}
       </div>
 
       {/* Auth Modal */}

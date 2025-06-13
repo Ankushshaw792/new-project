@@ -88,48 +88,48 @@ const ListingDetail = ({ listing }: ListingDetailProps) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* New Header Design */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm border-b">
-        <div className="flex items-center gap-4 px-6 py-4">
-          {/* Back Arrow */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleBackClick}
-            className="rounded-full hover:bg-gray-100 flex-shrink-0"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-
-          {/* Logo */}
-          <div className="flex-shrink-0">
+      {/* New Header Design - Matching the provided image */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
+        <div className="flex items-center justify-between px-4 py-3 max-w-7xl mx-auto">
+          {/* Left Section: Back Arrow + Logo */}
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleBackClick}
+              className="rounded-full hover:bg-gray-100 h-10 w-10"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
             <h1 className="text-2xl font-bold text-black">NYLOUR</h1>
           </div>
 
-          {/* Search Bar */}
-          <div className="relative flex-1 max-w-lg mx-4">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-            <Input
-              placeholder="Search for Salon or Styles"
-              className="pl-10 pr-4 py-3 w-full border-gray-300 rounded-full bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500"
-            />
+          {/* Center Section: Search Bar */}
+          <div className="flex-1 max-w-md mx-8">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Input
+                placeholder="Search for Salon or Styles"
+                className="pl-10 pr-4 py-2.5 w-full border-gray-300 rounded-full bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              />
+            </div>
           </div>
 
-          {/* Menu Button */}
+          {/* Right Section: Menu Button */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-full hover:bg-gray-100 flex-shrink-0"
+                className="rounded-full hover:bg-gray-100 h-10 w-10"
               >
                 <Menu className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem>
-                <span>For customers</span>
-              </DropdownMenuItem>
+            <DropdownMenuContent align="end" className="w-56">
+              <div className="px-3 py-2">
+                <p className="text-sm font-medium text-gray-900">For customers</p>
+              </div>
               <DropdownMenuSeparator />
               {user ? (
                 <>
@@ -144,8 +144,7 @@ const ListingDetail = ({ listing }: ListingDetailProps) => {
                 </>
               ) : (
                 <DropdownMenuItem>
-                  <User className="h-4 w-4 mr-2" />
-                  Log in or sign up
+                  <span className="text-blue-600">Log in or sign up</span>
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
@@ -170,28 +169,30 @@ const ListingDetail = ({ listing }: ListingDetailProps) => {
       {/* Main Content */}
       <div className="pt-[80px]">
         <div className="max-w-7xl mx-auto px-4 py-8">
-          {/* Header */}
+          {/* Replace the existing header section with the new design from image */}
           <div className="mb-6">
-            <h1 className="text-2xl font-semibold mb-2">{listingData.location}</h1>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1">
-                  <Star className="h-4 w-4" />
-                  <span>{listingData.rating}</span>
-                </div>
-                <span>·</span>
-                <span className="underline">{listingData.distance}</span>
+            <h1 className="text-3xl font-bold mb-2">Al Shanab Gents Salon</h1>
+            <div className="flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-1">
+                <span className="font-semibold">5.0</span>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star key={star} className="h-4 w-4 fill-current text-black" />
+                ))}
+                <span className="text-blue-600 underline">(591)</span>
               </div>
-              <div className="flex items-center gap-4">
-                <Button variant="ghost" className="flex items-center gap-2">
-                  <Share className="h-4 w-4" />
-                  Share
-                </Button>
-                <Button variant="ghost" className="flex items-center gap-2">
-                  <Heart className="h-4 w-4" />
-                  Save
-                </Button>
-              </div>
+              <span>•</span>
+              <span className="text-green-600 font-medium">Open until 11:00 pm</span>
+              <span>•</span>
+              <span>14 B Street, Jumeirah 1, Dubai</span>
+              <button className="text-blue-600 underline">Get directions</button>
+            </div>
+            <div className="flex items-center gap-4 mt-4">
+              <Button variant="ghost" className="flex items-center gap-2">
+                <Share className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" className="flex items-center gap-2">
+                <Heart className="h-4 w-4" />
+              </Button>
             </div>
           </div>
 

@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Heart, Share, Star, ArrowLeft } from "lucide-react";
+import { Heart, Share, Star, ArrowLeft, Search, Menu, MapPin, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Dialog,
@@ -10,6 +11,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/lib/auth";
 
 interface ListingDetailProps {
   listing?: {
@@ -36,6 +45,7 @@ interface ListingDetailProps {
 const ListingDetail = ({ listing }: ListingDetailProps) => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
 
   const handleBackClick = () => {
     // Go back to previous page if available, otherwise go to home
@@ -78,33 +88,82 @@ const ListingDetail = ({ listing }: ListingDetailProps) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header with Back Arrow */}
+      {/* New Header Design */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm border-b">
-        <div className="flex items-center justify-between px-6 py-4">
+        <div className="flex items-center gap-4 px-6 py-4">
           {/* Back Arrow */}
           <Button
             variant="ghost"
             size="icon"
             onClick={handleBackClick}
-            className="rounded-full hover:bg-gray-100"
+            className="rounded-full hover:bg-gray-100 flex-shrink-0"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
 
-          {/* Center - Page Title */}
-          <h1 className="text-lg font-semibold text-gray-900">
-            {listingData.location}
-          </h1>
-
-          {/* Right side - Actions */}
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <Share className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <Heart className="h-5 w-5" />
-            </Button>
+          {/* Logo */}
+          <div className="flex-shrink-0">
+            <h1 className="text-2xl font-bold text-black">NYLOUR</h1>
           </div>
+
+          {/* Search Bar */}
+          <div className="relative flex-1 max-w-lg mx-4">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Input
+              placeholder="Search for Salon or Styles"
+              className="pl-10 pr-4 py-3 w-full border-gray-300 rounded-full bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500"
+            />
+          </div>
+
+          {/* Menu Button */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full hover:bg-gray-100 flex-shrink-0"
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem>
+                <span>For customers</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              {user ? (
+                <>
+                  <DropdownMenuItem>
+                    <User className="h-4 w-4 mr-2" />
+                    Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={signOut} className="text-red-500">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sign out
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <DropdownMenuItem>
+                  <User className="h-4 w-4 mr-2" />
+                  Log in or sign up
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                Download the app
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                Help and support
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                🌐 English
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <span className="font-medium">For businesses</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </header>
 
@@ -801,7 +860,7 @@ const ListingDetail = ({ listing }: ListingDetailProps) => {
                     <button className="text-purple-600 hover:underline">
                       Get directions
                     </button>
-                  </div>
+                    </div>
                 </div>
               </div>
             </div>

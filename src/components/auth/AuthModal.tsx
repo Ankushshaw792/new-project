@@ -143,29 +143,18 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
               Continue with Email
             </Button>
 
-            {/* Google Sign In */}
-            <Button
+            {/* Updated Google Sign In Button - Matching the new design */}
+            <button
               type="button"
-              variant="outline"
-              className="w-full h-14 border border-gray-300 rounded-lg flex items-center justify-center gap-2 text-base font-medium mt-4"
+              className="w-full h-14 bg-white border border-gray-300 rounded-lg flex items-center justify-center gap-3 text-base font-medium hover:bg-gray-50 transition-colors"
             >
-              <img
-                src="https://api.dicebear.com/7.x/avataaars/svg?seed=user1"
-                alt="User"
-                className="h-8 w-8 rounded-full"
-              />
-              <div className="flex flex-col items-start">
-                <span className="text-sm font-semibold">Sign in as Ankush</span>
-                <span className="text-xs text-gray-500">
-                  ankushshaw007@gmail.com
-                </span>
-              </div>
               <img
                 src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
                 alt="Google"
-                className="h-6 w-6 ml-auto"
+                className="h-5 w-5"
               />
-            </Button>
+              <span className="text-gray-700">Sign in with Google</span>
+            </button>
 
             {/* New to Airbnb */}
             <div className="text-center pt-4 border-t">

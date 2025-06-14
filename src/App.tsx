@@ -7,24 +7,35 @@ import AdminDashboard from "./components/dashboard/AdminDashboard";
 import routes from "tempo-routes";
 import Footer from "./components/navigation/Footer";
 import { AuthProvider } from "./lib/auth";
+import { RBACProvider, withRoleProtection } from "./lib/rbac";
+
+// Protect dashboards with role-based access
+const ProtectedUserDashboard = withRoleProtection(UserDashboard, 'user');
+const ProtectedAdminDashboard = withRoleProtection(AdminDashboard, ['admin', 'salon_owner']);
 
 function App() {
   return (
     <AuthProvider>
-      <Suspense fallback={<p>Loading...</p>}>
-        <div className="min-h-screen flex flex-col">
-          <div className="flex-1">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/listing/:id" element={<ListingDetail />} />
-              <Route path="/dashboard" element={<UserDashboard />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-            </Routes>
-            {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
+      <RBACProvider>
+        <Suspense fallback={
+          <div className="flex items-center justify-center min-h-screen">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
           </div>
-          <Footer />
-        </div>
-      </Suspense>
+        }>
+          <div className="min-h-screen flex flex-col">
+            <div className="flex-1">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/listing/:id" element={<ListingDetail />} />
+                <Route path="/dashboard" element={<ProtectedUserDashboard />} />
+                <Route path="/admin" element={<ProtectedAdminDashboard />} />
+              </Routes>
+              {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
+            </div>
+            <Footer />
+          </div>
+        </Suspense>
+      </RBACProvider>
     </AuthProvider>
   );
 }

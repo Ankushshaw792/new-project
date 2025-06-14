@@ -8,9 +8,10 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "../ui/dropdown-menu";
-import { MapPin, Search, User, LogOut, Settings, Calendar } from "lucide-react";
+import { MapPin, Search, User, LogOut, Settings, Calendar, Shield } from "lucide-react";
 import { AuthModal } from "../auth/AuthModal";
 import { useAuth } from "@/lib/auth";
+import { useRBAC, RoleGate } from "@/lib/rbac";
 import SearchFilters from "../search/SearchFilters";
 import { useNavigate } from "react-router-dom";
 
@@ -36,6 +37,7 @@ const TopNav = ({
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { user, signOut } = useAuth();
+  const { userRole, isAdmin, isSalonOwner } = useRBAC();
   const navigate = useNavigate();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -49,6 +51,19 @@ const TopNav = ({
 
   const handleAdminClick = () => {
     navigate('/admin');
+  };
+
+  const getRoleDisplay = () => {
+    switch (userRole) {
+      case 'admin':
+        return 'Administrator';
+      case 'salon_owner':
+        return 'Salon Owner';
+      case 'user':
+        return 'Customer';
+      default:
+        return 'Guest';
+    }
   };
 
   return (
@@ -102,24 +117,56 @@ const TopNav = ({
                 className="flex items-center gap-2 text-gray-700 hover:bg-gray-50"
               >
                 <User className="h-5 w-5" />
-                Profile
+                <div className="text-left">
+                  <div className="font-medium">Profile</div>
+                  <div className="text-xs text-gray-500">{getRoleDisplay()}</div>
+                </div>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuContent align="end" className="w-56">
+              <div className="px-3 py-2">
+                <p className="text-sm font-medium text-gray-900">
+                  {user.email}
+                </p>
+                <p className="text-xs text-gray-500">{getRoleDisplay()}</p>
+              </div>
+              <DropdownMenuSeparator />
+              
+              {/* User Dashboard - Available to all authenticated users */}
               <DropdownMenuItem onClick={handleDashboardClick}>
                 <Calendar className="h-4 w-4 mr-2" />
                 My Dashboard
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={onHomeClick}>Homes</DropdownMenuItem>
+
+              {/* Admin/Salon Owner Panel */}
+              <RoleGate roles={['admin', 'salon_owner']}>
+                <DropdownMenuItem onClick={handleAdminClick}>
+                  <Shield className="h-4 w-4 mr-2" />
+                  {isAdmin() ? 'Admin Panel' : 'Salon Management'}
+                </DropdownMenuItem>
+              </RoleGate>
+
+              <DropdownMenuSeparator />
+              
+              {/* General Navigation */}
+              <DropdownMenuItem onClick={onHomeClick}>
+                Homes
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={onExperiencesClick}>
                 Experiences
               </DropdownMenuItem>
+              
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleAdminClick}>
+              
+              {/* Profile Settings */}
+              <DropdownMenuItem onClick={onProfileClick}>
                 <Settings className="h-4 w-4 mr-2" />
-                Admin Panel
+                Settings
               </DropdownMenuItem>
+              
               <DropdownMenuSeparator />
+              
+              {/* Sign Out */}
               <DropdownMenuItem onClick={signOut} className="text-red-500">
                 <LogOut className="h-4 w-4 mr-2" />
                 Sign out

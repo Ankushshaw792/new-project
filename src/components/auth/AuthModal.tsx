@@ -9,7 +9,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Mail } from "lucide-react";
+import { Mail, Eye, EyeOff } from "lucide-react";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -19,22 +19,27 @@ interface AuthModalProps {
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
+  const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const { signIn, signUp } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const { signIn, signUp, signInWithGoogle } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     if (!email || !password) {
       setError("Email and password are required");
+      setLoading(false);
       return;
     }
 
-    if (!isLogin && !username) {
-      setError("Username is required");
+    if (!isLogin && !fullName) {
+      setError("Full name is required");
+      setLoading(false);
       return;
     }
 
@@ -42,14 +47,32 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
       if (isLogin) {
         await signIn(email, password);
       } else {
-        // Store username in metadata or a separate table
-        await signUp(email, password);
-        // Username is handled in the signUp function
+        await signUp(email, password, fullName);
       }
       onClose();
+      // Reset form
+      setEmail("");
+      setPassword("");
+      setFullName("");
     } catch (error) {
       console.error("Auth error:", error);
       setError(error instanceof Error ? error.message : "An error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setError("");
+    setLoading(true);
+    try {
+      await signInWithGoogle();
+      onClose();
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      setError(error instanceof Error ? error.message : "An error occurred");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -78,21 +101,23 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   onChange={(e) => setEmail(e.target.value)}
                   className="h-14 pl-4 pr-4 rounded-lg border border-gray-300 w-full"
                   required
+                  disabled={loading}
                 />
               </div>
             </div>
 
-            {/* Username Input (only for signup) */}
+            {/* Full Name Input (only for signup) */}
             {!isLogin && (
               <div className="space-y-2">
                 <div className="relative">
                   <Input
                     type="text"
-                    placeholder="Username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Full Name"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
                     className="h-14 pl-4 pr-4 rounded-lg border border-gray-300 w-full"
                     required
+                    disabled={loading}
                   />
                 </div>
               </div>
@@ -102,13 +127,22 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
             <div className="space-y-2">
               <div className="relative">
                 <Input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-14 pl-4 pr-4 rounded-lg border border-gray-300 w-full"
+                  className="h-14 pl-4 pr-12 rounded-lg border border-gray-300 w-full"
                   required
+                  disabled={loading}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  disabled={loading}
+                >
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
               </div>
             </div>
 
@@ -118,8 +152,9 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
             <Button
               type="submit"
               className="w-full h-14 bg-[#FF385C] hover:bg-[#FF385C]/90 text-white rounded-lg text-base font-medium"
+              disabled={loading}
             >
-              {isLogin ? "Send One Time Password" : "Sign Up"}
+              {loading ? "Loading..." : (isLogin ? "Continue" : "Sign Up")}
             </Button>
 
             {/* Divider */}
@@ -132,21 +167,12 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
               </div>
             </div>
 
-            {/* Continue with Email */}
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full h-14 border border-gray-300 rounded-lg flex items-center justify-center gap-2 text-base font-medium"
-              onClick={() => setIsLogin(!isLogin)}
-            >
-              <Mail className="h-5 w-5 text-[#FF385C]" />
-              Continue with Email
-            </Button>
-
-            {/* Updated Google Sign In Button - Matching the new design */}
+            {/* Google Sign In Button */}
             <button
               type="button"
-              className="w-full h-14 bg-white border border-gray-300 rounded-lg flex items-center justify-center gap-3 text-base font-medium hover:bg-gray-50 transition-colors"
+              onClick={handleGoogleSignIn}
+              disabled={loading}
+              className="w-full h-14 bg-white border border-gray-300 rounded-lg flex items-center justify-center gap-3 text-base font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <img
                 src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
@@ -156,14 +182,18 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
               <span className="text-gray-700">Sign in with Google</span>
             </button>
 
-            {/* New to Airbnb */}
+            {/* Toggle between login/signup */}
             <div className="text-center pt-4 border-t">
               <p className="text-gray-700">
-                {isLogin ? "New to Airbnb?" : "Already have an account?"}{" "}
+                {isLogin ? "New to Nylour?" : "Already have an account?"}{" "}
                 <button
                   type="button"
                   className="text-[#FF385C] font-medium hover:underline"
-                  onClick={() => setIsLogin(!isLogin)}
+                  onClick={() => {
+                    setIsLogin(!isLogin);
+                    setError("");
+                  }}
+                  disabled={loading}
                 >
                   {isLogin ? "Create account" : "Login"}
                 </button>

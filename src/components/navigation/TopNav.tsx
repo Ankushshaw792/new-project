@@ -10,6 +10,7 @@ import {
 import { MapPin, Search, User, LogOut } from "lucide-react";
 import { AuthModal } from "../auth/AuthModal";
 import { useAuth } from "@/lib/auth";
+import SearchFilters from "../search/SearchFilters";
 
 interface TopNavProps {
   onLogoClick?: () => void;
@@ -18,6 +19,7 @@ interface TopNavProps {
   onHostClick?: () => void;
   onLanguageChange?: (language: string) => void;
   onProfileClick?: () => void;
+  onSearch?: (query: string) => void;
 }
 
 const TopNav = ({
@@ -27,9 +29,16 @@ const TopNav = ({
   onHostClick = () => {},
   onLanguageChange = () => {},
   onProfileClick = () => {},
+  onSearch = () => {},
 }: TopNavProps) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const { user, signOut } = useAuth();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSearch(searchQuery);
+  };
 
   return (
     <nav className="flex items-center justify-between px-6 py-4 bg-white border-b">
@@ -38,7 +47,7 @@ const TopNav = ({
         <h1 className="text-2xl font-bold text-black cursor-pointer">NYLOUR</h1>
       </div>
 
-      {/* Center Section with Location, Search, and Actions */}
+      {/* Center Section with Location, Search, and Filters */}
       <div className="flex items-center gap-4 flex-1 max-w-4xl mx-8">
         {/* Set Location Button */}
         <Button
@@ -50,13 +59,18 @@ const TopNav = ({
         </Button>
 
         {/* Search Bar */}
-        <div className="relative flex-1 max-w-lg">
+        <form onSubmit={handleSearch} className="relative flex-1 max-w-lg">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
           <Input
             placeholder="Search for Salon or Styles"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 pr-4 py-3 w-full border-gray-300 rounded-full bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500"
           />
-        </div>
+        </form>
+
+        {/* Search Filters */}
+        <SearchFilters onFiltersChange={(filters) => console.log('Filters:', filters)} />
 
         {/* Register your Salon Button */}
         <Button

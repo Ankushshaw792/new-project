@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import SalonCard from './SalonCard';
+import BookingModal from '../booking/BookingModal';
 
 interface Salon {
   id: number;
@@ -13,6 +14,13 @@ interface Salon {
   openUntil?: string;
   services: string[];
   priceRange: string;
+}
+
+interface Service {
+  id: string;
+  name: string;
+  duration: number;
+  price: number;
 }
 
 interface SalonGridProps {
@@ -101,22 +109,103 @@ const defaultSalons: Salon[] = [
   }
 ];
 
+// Sample services data for each salon
+const salonServices: Record<number, Service[]> = {
+  1: [
+    { id: 'haircut', name: 'Hair Cut', duration: 30, price: 40 },
+    { id: 'beard', name: 'Beard Trim', duration: 20, price: 25 },
+    { id: 'shave', name: 'Traditional Shave', duration: 25, price: 30 },
+    { id: 'massage', name: 'Head Massage', duration: 15, price: 20 },
+  ],
+  2: [
+    { id: 'haircut', name: 'Hair Cut', duration: 35, price: 60 },
+    { id: 'styling', name: 'Hair Styling', duration: 45, price: 80 },
+    { id: 'facial', name: 'Facial Treatment', duration: 60, price: 120 },
+    { id: 'manicure', name: 'Manicure', duration: 30, price: 50 },
+  ],
+  3: [
+    { id: 'premium-cut', name: 'Premium Hair Cut', duration: 45, price: 80 },
+    { id: 'beard-design', name: 'Beard Design', duration: 30, price: 60 },
+    { id: 'hair-color', name: 'Hair Coloring', duration: 90, price: 150 },
+    { id: 'massage', name: 'Relaxing Massage', duration: 30, price: 70 },
+  ],
+  4: [
+    { id: 'haircut', name: 'Classic Hair Cut', duration: 30, price: 45 },
+    { id: 'shave', name: 'Classic Shave', duration: 25, price: 35 },
+    { id: 'wash', name: 'Hair Wash & Style', duration: 20, price: 25 },
+    { id: 'facial', name: 'Gentleman Facial', duration: 45, price: 90 },
+  ],
+  5: [
+    { id: 'haircut', name: 'Gentleman Cut', duration: 35, price: 55 },
+    { id: 'beard', name: 'Beard Grooming', duration: 25, price: 40 },
+    { id: 'manicure', name: 'Hand Care', duration: 25, price: 45 },
+    { id: 'premium', name: 'Premium Package', duration: 90, price: 150 },
+  ],
+  6: [
+    { id: 'styling', name: 'Modern Styling', duration: 40, price: 70 },
+    { id: 'color', name: 'Hair Coloring', duration: 120, price: 200 },
+    { id: 'facial', name: 'Deep Cleanse Facial', duration: 50, price: 110 },
+    { id: 'massage', name: 'Scalp Massage', duration: 20, price: 40 },
+  ],
+};
+
 const SalonGrid = ({ 
   salons = defaultSalons, 
-  onBookNow = () => {}, 
   onViewDetails = () => {} 
 }: SalonGridProps) => {
+  const [bookingModal, setBookingModal] = useState<{
+    isOpen: boolean;
+    salon: Salon | null;
+  }>({
+    isOpen: false,
+    salon: null,
+  });
+
+  const handleBookNow = (salonId: number) => {
+    const salon = salons.find(s => s.id === salonId);
+    if (salon) {
+      setBookingModal({
+        isOpen: true,
+        salon,
+      });
+    }
+  };
+
+  const closeBookingModal = () => {
+    setBookingModal({
+      isOpen: false,
+      salon: null,
+    });
+  };
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {salons.map((salon) => (
-        <SalonCard
-          key={salon.id}
-          salon={salon}
-          onBookNow={onBookNow}
-          onViewDetails={onViewDetails}
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {salons.map((salon) => (
+          <SalonCard
+            key={salon.id}
+            salon={salon}
+            onBookNow={handleBookNow}
+            onViewDetails={onViewDetails}
+          />
+        ))}
+      </div>
+
+      {/* Booking Modal */}
+      {bookingModal.salon && (
+        <BookingModal
+          isOpen={bookingModal.isOpen}
+          onClose={closeBookingModal}
+          salon={{
+            id: bookingModal.salon.id,
+            name: bookingModal.salon.name,
+            image: bookingModal.salon.image,
+            location: bookingModal.salon.location,
+          }}
+          services={salonServices[bookingModal.salon.id] || []}
         />
-      ))}
-    </div>
+      )}
+    </>
   );
 };
 

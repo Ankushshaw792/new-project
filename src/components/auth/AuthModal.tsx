@@ -31,6 +31,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     setError("");
     setLoading(true);
 
+    // Basic validation
     if (!email || !password) {
       setError("Email and password are required");
       setLoading(false);
@@ -38,7 +39,13 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     }
 
     if (!isLogin && !fullName) {
-      setError("Full name is required");
+      setError("Full name is required for signup");
+      setLoading(false);
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long");
       setLoading(false);
       return;
     }
@@ -54,9 +61,9 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
       setEmail("");
       setPassword("");
       setFullName("");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Auth error:", error);
-      setError(error instanceof Error ? error.message : "An error occurred");
+      setError(error.message || "An error occurred during authentication");
     } finally {
       setLoading(false);
     }
@@ -68,9 +75,9 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     try {
       await signInWithGoogle();
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Google sign-in error:", error);
-      setError(error instanceof Error ? error.message : "An error occurred");
+      setError(error.message || "An error occurred with Google sign-in");
     } finally {
       setLoading(false);
     }
@@ -134,6 +141,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   className="h-14 pl-4 pr-12 rounded-lg border border-gray-300 w-full"
                   required
                   disabled={loading}
+                  minLength={6}
                 />
                 <button
                   type="button"
@@ -146,7 +154,11 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
               </div>
             </div>
 
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+            {error && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-600 text-sm">{error}</p>
+              </div>
+            )}
 
             {/* Submit Button */}
             <Button

@@ -45,7 +45,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for changes on auth state (logged in, signed out, etc.)
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event, session?.user?.email);
       setUser(session?.user ?? null);
       if (session?.user) {
         await fetchProfile(session.user.id);
@@ -78,58 +79,104 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signUp = async (email: string, password: string, fullName?: string) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName || '',
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName || '',
+          },
         },
-      },
-    });
+      });
 
-    if (error) throw error;
+      if (error) {
+        console.error('Signup error:', error);
+        throw new Error(error.message);
+      }
 
-    // Profile will be created automatically by the database trigger
-    return data;
+      console.log('Signup successful:', data);
+      return data;
+    } catch (error) {
+      console.error('Signup error:', error);
+      throw error;
+    }
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) throw error;
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        console.error('Signin error:', error);
+        throw new Error(error.message);
+      }
+
+      console.log('Signin successful:', data);
+    } catch (error) {
+      console.error('Signin error:', error);
+      throw error;
+    }
   };
 
   const signInWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/`,
-      },
-    });
-    if (error) throw error;
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`,
+        },
+      });
+
+      if (error) {
+        console.error('Google signin error:', error);
+        throw new Error(error.message);
+      }
+
+      console.log('Google signin initiated:', data);
+    } catch (error) {
+      console.error('Google signin error:', error);
+      throw error;
+    }
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
-    setProfile(null);
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Signout error:', error);
+        throw new Error(error.message);
+      }
+      setProfile(null);
+    } catch (error) {
+      console.error('Signout error:', error);
+      throw error;
+    }
   };
 
   const updateProfile = async (updates: Partial<UserProfile>) => {
     if (!user) throw new Error('No user logged in');
 
-    const { error } = await supabase
-      .from('users')
-      .update(updates)
-      .eq('id', user.id);
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update(updates)
+        .eq('id', user.id);
 
-    if (error) throw error;
+      if (error) {
+        console.error('Update profile error:', error);
+        throw new Error(error.message);
+      }
 
-    // Refresh profile data
-    await fetchProfile(user.id);
+      // Refresh profile data
+      await fetchProfile(user.id);
+    } catch (error) {
+      console.error('Update profile error:', error);
+      throw error;
+    }
   };
 
   return (

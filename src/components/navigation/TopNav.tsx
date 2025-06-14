@@ -6,11 +6,13 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "../ui/dropdown-menu";
-import { MapPin, Search, User, LogOut } from "lucide-react";
+import { MapPin, Search, User, LogOut, Settings, Calendar } from "lucide-react";
 import { AuthModal } from "../auth/AuthModal";
 import { useAuth } from "@/lib/auth";
 import SearchFilters from "../search/SearchFilters";
+import { useNavigate } from "react-router-dom";
 
 interface TopNavProps {
   onLogoClick?: () => void;
@@ -34,10 +36,19 @@ const TopNav = ({
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     onSearch(searchQuery);
+  };
+
+  const handleDashboardClick = () => {
+    navigate('/dashboard');
+  };
+
+  const handleAdminClick = () => {
+    navigate('/admin');
   };
 
   return (
@@ -95,13 +106,20 @@ const TopNav = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={handleDashboardClick}>
+                <Calendar className="h-4 w-4 mr-2" />
+                My Dashboard
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={onHomeClick}>Homes</DropdownMenuItem>
               <DropdownMenuItem onClick={onExperiencesClick}>
                 Experiences
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={onProfileClick}>
-                Profile
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleAdminClick}>
+                <Settings className="h-4 w-4 mr-2" />
+                Admin Panel
               </DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem onClick={signOut} className="text-red-500">
                 <LogOut className="h-4 w-4 mr-2" />
                 Sign out

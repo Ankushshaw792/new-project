@@ -20,16 +20,16 @@ const CategoryBar = ({
   onPriceDisplayToggle = () => {},
 }: CategoryBarProps) => {
   const categories = [
-    { id: "pools", label: "Amazing pools", icon: "🏊‍♂️" },
-    { id: "beach", label: "Beach front", icon: "🏖️" },
-    { id: "castles", label: "Castles", icon: "🏰" },
-    { id: "islands", label: "Islands", icon: "🏝️" },
-    { id: "camping", label: "Camping", icon: "⛺" },
-    { id: "arctic", label: "Arctic", icon: "❄️" },
-    { id: "desert", label: "Desert", icon: "🏜️" },
-    { id: "boats", label: "Boats", icon: "⛵" },
-    { id: "mountains", label: "Mountains", icon: "🏔️" },
-    { id: "tropical", label: "Tropical", icon: "🌴" },
+    { id: "haircut", label: "Hair Cut", icon: "✂️" },
+    { id: "styling", label: "Hair Styling", icon: "💇‍♂️" },
+    { id: "beard", label: "Beard Trim", icon: "🧔" },
+    { id: "shaving", label: "Shaving", icon: "🪒" },
+    { id: "wash", label: "Hair Wash", icon: "🚿" },
+    { id: "massage", label: "Massage", icon: "💆‍♂️" },
+    { id: "facial", label: "Facial", icon: "🧴" },
+    { id: "manicure", label: "Manicure", icon: "💅" },
+    { id: "coloring", label: "Hair Color", icon: "🎨" },
+    { id: "premium", label: "Premium", icon: "⭐" },
   ];
 
   return (

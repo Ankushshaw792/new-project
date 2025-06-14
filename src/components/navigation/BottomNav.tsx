@@ -20,16 +20,16 @@ interface BottomNavProps {
 }
 
 const defaultCategories: Category[] = [
-  { id: "1", name: "Amazing pools", icon: "🏊‍♂️" },
-  { id: "2", name: "Beach front", icon: "🏖️" },
-  { id: "3", name: "Tiny homes", icon: "🏠" },
-  { id: "4", name: "Islands", icon: "🏝️" },
-  { id: "5", name: "Castles", icon: "🏰" },
-  { id: "6", name: "Camping", icon: "⛺" },
-  { id: "7", name: "Arctic", icon: "❄️" },
-  { id: "8", name: "Desert", icon: "🏜️" },
-  { id: "9", name: "Boats", icon: "⛵" },
-  { id: "10", name: "Luxury", icon: "✨" },
+  { id: "1", name: "Hair Cut", icon: "✂️" },
+  { id: "2", name: "Hair Styling", icon: "💇‍♂️" },
+  { id: "3", name: "Beard Trim", icon: "🧔" },
+  { id: "4", name: "Shaving", icon: "🪒" },
+  { id: "5", name: "Hair Wash", icon: "🚿" },
+  { id: "6", name: "Massage", icon: "💆‍♂️" },
+  { id: "7", name: "Facial", icon: "🧴" },
+  { id: "8", name: "Manicure", icon: "💅" },
+  { id: "9", name: "Hair Color", icon: "🎨" },
+  { id: "10", name: "Premium", icon: "⭐" },
 ];
 
 const BottomNav = ({
